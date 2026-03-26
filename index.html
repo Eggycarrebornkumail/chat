@@ -172,7 +172,9 @@ onSnapshot(q,(snapshot)=>{
     if(data.profilePic){
       avatar=document.createElement('img')
       avatar.className='avatar'
-      avatar.src=data.profilePic
+     avatar.src=data.profilePic
+avatar.style.cursor="pointer"
+avatar.onclick=()=>openImage(data.profilePic)
     }else{
       avatar=document.createElement('div')
       avatar.className='avatar'
@@ -197,6 +199,8 @@ onSnapshot(q,(snapshot)=>{
     if(data.image){
       const img=document.createElement('img')
       img.src=data.image
+img.style.cursor="pointer"
+img.onclick=()=>openImage(data.image)
       bubble.appendChild(img)
     }
 
@@ -208,7 +212,31 @@ onSnapshot(q,(snapshot)=>{
 
   messagesDiv.scrollTop=messagesDiv.scrollHeight
 })
-</script>
 
+const modal = document.getElementById("imageModal")
+const modalImg = document.getElementById("modalImg")
+
+function openImage(src){
+  modal.style.display = "flex"
+  modalImg.src = src
+}
+
+modal.addEventListener("click", ()=>{
+  modal.style.display = "none"
+})
+</script>
+<div id="imageModal" style="
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.9);
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+">
+  <img id="modalImg" style="max-width:90%;max-height:90%;border-radius:10px;">
+</div>
 </body>
 </html>
