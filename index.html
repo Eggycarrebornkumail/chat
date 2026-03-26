@@ -10,72 +10,52 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:Segoe UI,Arial;background:var(--bg);color:var(--text);overflow:hidden}
 
-body::before,body::after{content:"";position:fixed;width:300%;height:300%;z-index:0}
-body::before{background:radial-gradient(circle at 20% 30%, rgba(255,212,0,0.25) 2px, transparent 60px),radial-gradient(circle at 70% 60%, rgba(255,212,0,0.2) 2px, transparent 80px),radial-gradient(circle at 40% 80%, rgba(255,212,0,0.15) 2px, transparent 100px);animation:float1 25s linear infinite alternate}
-body::after{background:radial-gradient(circle at 10% 70%, rgba(255,212,0,0.15) 2px, transparent 70px),radial-gradient(circle at 80% 20%, rgba(255,212,0,0.2) 2px, transparent 90px),radial-gradient(circle at 50% 50%, rgba(255,212,0,0.1) 2px, transparent 120px);animation:float2 35s linear infinite alternate}
-@keyframes float1{from{transform:translate(0,0) scale(1)}to{transform:translate(-200px,-150px) scale(1.1)}}
-@keyframes float2{from{transform:translate(0,0) scale(1)}to{transform:translate(150px,120px) scale(1.15)}}
+.container{display:flex;flex-direction:column;height:100vh}
 
-.container{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh}
-.login{margin:auto;background:var(--panel);padding:30px;border-radius:14px;width:260px;text-align:center}
-.login input{width:100%;padding:10px;margin:8px 0;border:none;border-radius:8px;background:#1c1c1c;color:white}
-.login button{width:100%;padding:10px;border:none;border-radius:8px;background:var(--accent);font-weight:bold}
+.top-bar{display:flex;gap:10px;padding:10px;background:var(--panel)}
+.top-bar input{padding:8px;border:none;border-radius:8px;background:#1c1c1c;color:white}
 
-.chat{display:none;flex-direction:column;height:100%}
+.chat{display:flex;flex-direction:column;height:100%}
 .messages{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:20px}
-.message{display:flex;gap:10px;max-width:650px;width:100%;margin:8px 0;animation:fadeIn 0.3s ease}
-.avatar{width:36px;height:36px;border-radius:50%;background:#222}
-.bubble{background:var(--panel);padding:12px 16px;border-radius:20px;box-shadow:0 0 10px rgba(255,212,0,0.1);width:100%}
+.message{display:flex;gap:10px;max-width:650px;width:100%;margin:8px 0}
+.avatar{width:36px;height:36px;border-radius:50%;background:#222;object-fit:cover}
+.bubble{background:var(--panel);padding:12px 16px;border-radius:20px;width:100%}
 .username{color:var(--accent);font-size:12px;margin-bottom:4px}
-.msg-text{font-size:16px}
 .bubble img{margin-top:8px;max-width:100%;border-radius:10px}
 
-.input-area{display:flex;align-items:center;gap:10px;padding:10px;background:var(--panel)}
-.profile-section{display:flex;align-items:center;gap:8px}
+.input-area{display:flex;gap:10px;padding:10px;background:var(--panel);align-items:center}
 .profile-preview{width:34px;height:34px;border-radius:50%;background:#222;object-fit:cover}
-.profile-label{padding:6px 10px;border-radius:20px;background:#1c1c1c;cursor:pointer;font-size:12px}
-.profile-section input{display:none}
-
-.input-box{flex:1;display:flex;align-items:center;background:#1c1c1c;border-radius:30px;padding:6px 10px}
-.input-box input{flex:1;background:transparent;border:none;color:white;font-size:14px}
-.input-box input:focus{outline:none}
-.plus{width:34px;height:34px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:bold;cursor:pointer}
+.input-box{flex:1;display:flex;background:#1c1c1c;border-radius:30px;padding:6px 10px}
+.input-box input{flex:1;background:transparent;border:none;color:white}
+.plus{width:34px;height:34px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .hidden-file{display:none}
-button.send{padding:10px 16px;border:none;border-radius:20px;background:var(--accent);font-weight:bold}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+button{padding:10px 16px;border:none;border-radius:20px;background:var(--accent)}
 </style>
 </head>
 <body>
 
 <div class="container">
 
-<div class="login" id="loginBox">
-  <h2 style="color:var(--accent)">Login</h2>
-  <input type="text" id="username" placeholder="Username">
-  <input type="password" id="password" placeholder="Password">
-  <button onclick="login()">Enter</button>
-  <p id="error" style="color:red"></p>
+<div class="top-bar">
+  <input type="text" id="username" placeholder="Enter username">
+  <img id="profilePreview" class="profile-preview">
+  <input type="file" id="profileInput">
 </div>
 
-<div class="chat" id="chatApp">
+<div class="chat">
   <div class="messages" id="messages"></div>
 
   <div class="input-area">
-    <div class="profile-section">
-      <img id="profilePreview" class="profile-preview">
-      <label class="profile-label" for="profileInput">Profile</label>
-      <input type="file" id="profileInput">
-    </div>
-
     <div class="input-box">
       <input type="text" id="messageInput" placeholder="Type message">
-      <div class="plus" onclick="document.getElementById('imageInput').click()">+</div>
+      <div class="plus" id="uploadBtn">+</div>
     </div>
 
     <input type="file" id="imageInput" class="hidden-file">
-    <button class="send" onclick="sendMessage()">Send</button>
+    <button id="sendBtn">Send</button>
   </div>
 </div>
+
 </div>
 
 <script type="module">
@@ -83,133 +63,132 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebas
 import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-const firebaseConfig={apiKey:"AIzaSyBXTxZKC3gW1ZTq6iwxx6Cw5sfkyAy9RYA",authDomain:"chat-a48a1.firebaseapp.com",projectId:"chat-a48a1",storageBucket:"chat-a48a1.firebasestorage.app",messagingSenderId:"202994011723",appId:"1:202994011723:web:221860b2eb0acf449607ce"}
+// FIREBASE
+const firebaseConfig={
+  apiKey:"AIzaSy...",
+  authDomain:"chat-a48a1.firebaseapp.com",
+  projectId:"chat-a48a1"
+};
 
-const app=initializeApp(firebaseConfig)
-const db=getFirestore(app)
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
 
-const supabase=createClient("https://gsahyfawfxjpfxcqpjvk.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWh5ZmF3ZnhqcGZ4Y3FwanZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDYyMDYsImV4cCI6MjA4OTQyMjIwNn0.GpbGst-tN8ONHifaXXb-Ehn8JgxWJ3q7w3hf4b8_AxY")
+// SUPABASE
+const supabase=createClient(
+  "https://gsahyfawfxjpfxcqpjvk.supabase.co",
+  "YOUR_KEY_HERE"
+);
 
-let currentUser=""
-let profilePic=""
+let profilePic="";
 
-function _0x(a){return atob(a)}
+// PROFILE UPLOAD
+document.getElementById('profileInput').addEventListener('change', async function(){
+  const file=this.files[0];
+  if(!file) return;
 
-const users={
-  [_0x("a3VtYWls")]:_0x("dGVzdA=="),
-  [_0x("YnJhZGxleQ==")]:_0x("YnJhZGxleTY3"),
-  [_0x("bmF0aGFu")]:_0x("Y2hvZGVy"),
-  [_0x("bmV2YW4=")]:_0x("cHJlZGF0b3I="),
-  [_0x("bmF0")]:_0x("YmVsdA=="),
-  [_0x("a2VpdGg=")]:_0x("a2VpdGhrbm93cw==")
-}
+  const fileName=Date.now()+"_"+file.name;
 
-window.login=function(){
-  const userInput=document.getElementById('username').value.trim().toLowerCase()
-  const passInput=document.getElementById('password').value.trim().toLowerCase()
+  const { error } = await supabase.storage.from('images').upload(fileName,file);
+  if(error){ alert(error.message); return; }
 
-  const userExists = users[userInput] !== undefined
-  const passCorrect = userExists && users[userInput] === passInput
+  const { data }=supabase.storage.from('images').getPublicUrl(fileName);
+  profilePic=data.publicUrl;
 
-  if(userExists && passCorrect){
-    currentUser=userInput
-    document.getElementById('loginBox').style.display='none'
-    document.getElementById('chatApp').style.display='flex'
-  }else if(!userExists && !passCorrect){
-    document.getElementById('error').innerText='Wrong username and password'
-  }else if(!userExists){
-    document.getElementById('error').innerText='Wrong username'
-  }else{
-    document.getElementById('error').innerText='Wrong password'
-  }
-}
+  document.getElementById('profilePreview').src=profilePic;
+});
 
-const profileInput=document.getElementById('profileInput')
-const preview=document.getElementById('profilePreview')
+// IMAGE BUTTON
+document.getElementById("uploadBtn").onclick=()=>{
+  document.getElementById("imageInput").click();
+};
 
-profileInput.addEventListener('change',async function(){
-  const file=this.files[0]
-  if(file){
-    const fileName=Date.now()+"_"+file.name
-    await supabase.storage.from('images').upload(fileName,file)
-    const { data }=supabase.storage.from('images').getPublicUrl(fileName)
-    profilePic=data.publicUrl
-    preview.src=profilePic
-  }
-})
+// SEND MESSAGE
+async function sendMessage(){
+  const text=document.getElementById('messageInput').value;
+  const username=document.getElementById('username').value || "Anonymous";
+  const file=document.getElementById('imageInput').files[0];
 
-window.sendMessage=async function(){
-  const text=document.getElementById('messageInput').value
-  const file=document.getElementById('imageInput').files[0]
-  let imageUrl=""
+  let imageUrl="";
 
   if(file){
-    const fileName=Date.now()+"_"+file.name
-    await supabase.storage.from('images').upload(fileName,file)
-    const { data }=supabase.storage.from('images').getPublicUrl(fileName)
-    imageUrl=data.publicUrl
+    const fileName=Date.now()+"_"+file.name;
+
+    const { error } = await supabase.storage.from('images').upload(fileName,file);
+    if(error){ alert(error.message); return; }
+
+    const { data }=supabase.storage.from('images').getPublicUrl(fileName);
+    imageUrl=data.publicUrl;
   }
 
-  if(!text&&!imageUrl)return
+  if(!text && !imageUrl) return;
 
-  await addDoc(collection(db,"messages"),{user:currentUser,text:text,profilePic:profilePic||"",image:imageUrl,createdAt:Date.now()})
+  await addDoc(collection(db,"messages"),{
+    user:username,
+    text:text,
+    image:imageUrl,
+    profilePic:profilePic,
+    createdAt:Date.now()
+  });
 
-  document.getElementById('messageInput').value=''
-  document.getElementById('imageInput').value=''
+  document.getElementById('messageInput').value='';
+  document.getElementById('imageInput').value='';
 }
 
-const messagesDiv=document.getElementById('messages')
-const q=query(collection(db,"messages"),orderBy("createdAt"))
+// FIX BUTTON (NO onclick bug anymore)
+document.getElementById("sendBtn").onclick = sendMessage;
+
+// REALTIME MESSAGES
+const messagesDiv=document.getElementById('messages');
+const q=query(collection(db,"messages"),orderBy("createdAt"));
 
 onSnapshot(q,(snapshot)=>{
-  messagesDiv.innerHTML=""
+  messagesDiv.innerHTML="";
 
   snapshot.forEach(doc=>{
-    const data=doc.data()
+    const data=doc.data();
 
-    const msg=document.createElement('div')
-    msg.className='message'
+    const msg=document.createElement('div');
+    msg.className='message';
 
-    let avatar
+    let avatar;
     if(data.profilePic){
-      avatar=document.createElement('img')
-      avatar.className='avatar'
-      avatar.src=data.profilePic
-    }else{
-      avatar=document.createElement('div')
-      avatar.className='avatar'
+      avatar=document.createElement('img');
+      avatar.className='avatar';
+      avatar.src=data.profilePic;
+    } else {
+      avatar=document.createElement('div');
+      avatar.className='avatar';
     }
 
-    const bubble=document.createElement('div')
-    bubble.className='bubble'
+    const bubble=document.createElement('div');
+    bubble.className='bubble';
 
-    const user=document.createElement('div')
-    user.className='username'
-    user.innerText=data.user
+    const user=document.createElement('div');
+    user.className='username';
+    user.innerText=data.user;
 
-    bubble.appendChild(user)
+    bubble.appendChild(user);
 
     if(data.text){
-      const t=document.createElement('div')
-      t.className='msg-text'
-      t.innerText=data.text
-      bubble.appendChild(t)
+      const t=document.createElement('div');
+      t.innerText=data.text;
+      bubble.appendChild(t);
     }
 
     if(data.image){
-      const img=document.createElement('img')
-      img.src=data.image
-      bubble.appendChild(img)
+      const img=document.createElement('img');
+      img.src=data.image;
+      bubble.appendChild(img);
     }
 
-    msg.appendChild(avatar)
-    msg.appendChild(bubble)
+    msg.appendChild(avatar);
+    msg.appendChild(bubble);
 
-    messagesDiv.appendChild(msg)
-  })
+    messagesDiv.appendChild(msg);
+  });
 
-  messagesDiv.scrollTop=messagesDiv.scrollHeight
-})
+  messagesDiv.scrollTop=messagesDiv.scrollHeight;
+});
 </script>
 
 </body>
