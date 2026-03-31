@@ -218,7 +218,7 @@ window.sendMessage = async function() {
 
     if(!text && !imageUrl) return;
 
-    await addDoc(collection(db, "messages"), {
+    await addDoc(collection(db, "messages1"), {
         user: isAdmin ? "Owner" : user,
         text,
         image: imageUrl,
