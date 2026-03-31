@@ -232,7 +232,7 @@ window.sendMessage = async function() {
     document.getElementById('imageInput').value = '';
 };
 
-onSnapshot(query(collection(db, "messages"), orderBy("createdAt")), (snap) => {
+onSnapshot(query(collection(db, "messages1"), orderBy("createdAt")), (snap) => {
     const messagesDiv = document.getElementById('messages');
     messagesDiv.innerHTML = "";
 
