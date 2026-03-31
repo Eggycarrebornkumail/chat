@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KP Chat made by kumail nathan is chudmaxxer</title>
+<title>KP Chat - Owner Edition</title>
 
 <style>
-:root{--bg:#0a0a0a;--panel:#121212;--accent:#ffd400;--text:#fff}
+:root{--bg:#0a0a0a;--panel:#121212;--accent:#ffd400;--text:#fff;--owner:#ff4d4d}
 *{box-sizing:border-box}
 
 body{
@@ -18,330 +18,289 @@ body{
   overflow:hidden;
 }
 
-.container{
-  display:flex;
-  flex-direction:column;
-  height:100%;
+.container{ display:flex; flex-direction:column; height:100%; }
+
+/* Login Overlay */
+.login-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg); z-index: 1000; display: flex; 
+    flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+}
+.login-overlay input { 
+    padding: 12px; border-radius: 20px; border: 1px solid #333; 
+    background: #1c1c1c; color: #fff; width: 260px; outline: none;
 }
 
-/* username */
-.username-set{
-  padding:10px;
-  background:var(--panel);
+/* Pinned Area */
+#pinned-area { 
+    background: #1a1a00; border-bottom: 1px solid var(--accent); 
+    padding: 12px; display: none; width: 100%; font-size: 14px;
+    animation: slideDown 0.3s ease;
 }
+@keyframes slideDown { from{transform: translateY(-100%)} to{transform: translateY(0)} }
+
+/* username */
+.username-set{ padding:10px; background:var(--panel); }
 .username-set input{
-  width:100%;
-  padding:10px;
-  border:none;
-  border-radius:20px;
-  background:#1c1c1c;
-  color:white;
+  width:100%; padding:10px; border:none; border-radius:20px;
+  background:#1c1c1c; color:white;
 }
 
 /* chat */
-.chat{
-  display:flex;
-  flex-direction:column;
-  height:100%;
-  min-height:0;
-}
-
+.chat{ display:flex; flex-direction:column; height:100%; min-height:0; }
 .messages{
-  flex:1;
-  min-height:0;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:20px;
+  flex:1; min-height:0; overflow-y:auto;
+  display:flex; flex-direction:column; align-items:center; padding:20px;
 }
 
-.message{
-  display:flex;
-  gap:10px;
-  max-width:650px;
-  width:100%;
-  margin:8px 0;
-}
+.message{ display:flex; gap:10px; max-width:650px; width:100%; margin:8px 0; }
+.avatar{ width:36px; height:36px; border-radius:50%; background:#222; object-fit:cover; }
+.bubble{ background:var(--panel); padding:12px 16px; border-radius:20px; width:100%; position: relative; }
 
-.avatar{
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  background:#222;
-  object-fit:cover;
-  cursor:pointer;
-}
+.username{ color:var(--accent); font-size:12px; margin-bottom:4px; display: flex; align-items: center; gap: 8px; }
+.admin-badge { color: var(--owner); font-weight: bold; }
+.device-id { font-size: 9px; color: #555; font-family: monospace; }
+.pin-action { font-size: 10px; color: var(--accent); cursor: pointer; text-decoration: underline; margin-left: auto;}
 
-.bubble{
-  background:var(--panel);
-  padding:12px 16px;
-  border-radius:20px;
-  width:100%;
-}
-
-.username{
-  color:var(--accent);
-  font-size:12px;
-  margin-bottom:4px;
-}
-
-.bubble img{
-  margin-top:8px;
-  max-width:100%;
-  border-radius:10px;
-  cursor:pointer;
-}
+.bubble img{ margin-top:8px; max-width:100%; border-radius:10px; cursor:pointer; }
 
 /* input */
 .input-area{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px;
-  background:var(--panel);
-  position:sticky;
-  bottom:0;
+  display:flex; align-items:center; gap:10px; padding:10px;
+  background:var(--panel); position:sticky; bottom:0;
 }
-
-.profile-section{
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-.profile-preview{
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#222;
-  cursor:pointer;
-}
-
-.profile-label{
-  padding:6px 10px;
-  border-radius:20px;
-  background:#1c1c1c;
-  cursor:pointer;
-  font-size:12px;
-}
-
+.profile-section{ display:flex; align-items:center; gap:8px; }
+.profile-preview{ width:34px; height:34px; border-radius:50%; object-fit:cover; background:#222; }
+.profile-label{ padding:6px 10px; border-radius:20px; background:#1c1c1c; cursor:pointer; font-size:12px; }
 .profile-section input{display:none}
 
-.input-box{
-  flex:1;
-  display:flex;
-  background:#1c1c1c;
-  border-radius:30px;
-  padding:6px 10px;
-}
-
-.input-box input{
-  flex:1;
-  background:transparent;
-  border:none;
-  color:white;
-}
+.input-box{ flex:1; display:flex; background:#1c1c1c; border-radius:30px; padding:6px 10px; }
+.input-box input{ flex:1; background:transparent; border:none; color:white; outline:none; }
 
 .plus{
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  background:var(--accent);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
+  width:34px; height:34px; border-radius:50%; background:var(--accent);
+  display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight: bold;
 }
+button.send{ padding:10px 20px; border:none; border-radius:20px; background:var(--accent); cursor:pointer; font-weight: bold;}
 
-button.send{
-  padding:10px 16px;
-  border:none;
-  border-radius:20px;
-  background:var(--accent);
-}
-
-/* modal */
 #imageModal{
-  display:none;
-  position:fixed;
-  top:0;left:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.9);
-  justify-content:center;
-  align-items:center;
-  z-index:999;
+  display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.9); justify-content:center; align-items:center; z-index:2000;
 }
-
-#imageModal img{
-  max-width:90%;
-  max-height:90%;
-  border-radius:10px;
-}
+#imageModal img{ max-width:90%; max-height:90%; border-radius:10px; }
 </style>
 </head>
 
 <body>
 
+<div id="loginGate" class="login-overlay">
+    <h2 style="color:var(--accent)">KP CHAT</h2>
+    <button class="send" onclick="enterAsGuest()">Enter as Guest</button>
+    <div style="margin: 10px; color: #444;">OR</div>
+    <input type="text" id="adminUser" placeholder="Admin Username">
+    <input type="password" id="adminPass" placeholder="Admin Password">
+    <button class="send" style="background:var(--owner)" onclick="tryAdminLogin()">Admin Login</button>
+</div>
+
 <div class="container">
-<div class="chat">
+    <div id="pinned-area">📌 <b>PINNED:</b> <span id="pin-content"></span></div>
+    
+    <div class="chat">
+        <div class="username-set">
+            <input type="text" id="usernameInput" placeholder="Set display name...">
+        </div>
 
-<div class="username-set">
-  <input type="text" id="usernameInput" placeholder="Enter username">
+        <div class="messages" id="messages"></div>
+
+        <div class="input-area">
+            <div class="profile-section">
+                <img id="profilePreview" class="profile-preview">
+                <label class="profile-label" for="profileInput">Avatar</label>
+                <input type="file" id="profileInput">
+            </div>
+
+            <div class="input-box">
+                <input type="text" id="messageInput" placeholder="Say something...">
+                <div class="plus" onclick="document.getElementById('imageInput').click()">+</div>
+            </div>
+
+            <input type="file" id="imageInput" style="display:none">
+            <button class="send" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
 </div>
 
-<div class="messages" id="messages"></div>
-
-<div class="input-area">
-
-  <!-- ✅ PROFILE SECTION BACK -->
-  <div class="profile-section">
-    <img id="profilePreview" class="profile-preview">
-    <label class="profile-label" for="profileInput">Profile</label>
-    <input type="file" id="profileInput">
-  </div>
-
-  <div class="input-box">
-    <input type="text" id="messageInput" placeholder="Type message">
-    <div class="plus" onclick="document.getElementById('imageInput').click()">+</div>
-  </div>
-
-  <input type="file" id="imageInput" class="hidden-file">
-  <button class="send" onclick="sendMessage()">Send</button>
-</div>
-
-</div>
-</div>
-
-<!-- modal -->
-<div id="imageModal">
-  <img id="modalImg">
+<div id="imageModal" onclick="this.style.display='none'">
+    <img id="modalImg">
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
+// Configs
 const firebaseConfig={apiKey:"AIza...",authDomain:"chat-a48a1.firebaseapp.com",projectId:"chat-a48a1"}
 const app=initializeApp(firebaseConfig)
 const db=getFirestore(app)
-
 const supabase=createClient("https://gsahyfawfxjpfxcqpjvk.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWh5ZmF3ZnhqcGZ4Y3FwanZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDYyMDYsImV4cCI6MjA4OTQyMjIwNn0.GpbGst-tN8ONHifaXXb-Ehn8JgxWJ3q7w3hf4b8_AxY")
 
-let profilePic=""
+// Obfuscated Credentials (Base64)
+const _0x1 = "a3VtYWls"; // "kumail"
+const _0x2 = "dGVzdA==";  // "test"
 
-// username save
-const usernameInput=document.getElementById('usernameInput')
-const saved=localStorage.getItem("chatUsername")
-if(saved) usernameInput.value=saved
+let isAdmin = false;
+let profilePic = "";
 
-usernameInput.addEventListener("input",()=>{
-  localStorage.setItem("chatUsername",usernameInput.value)
-})
-
-// modal
-const modal=document.getElementById("imageModal")
-const modalImg=document.getElementById("modalImg")
-
-function openImage(src){
-  modal.style.display="flex"
-  modalImg.src=src
+// Persistent Device ID
+let deviceID = localStorage.getItem("kp_dev_id");
+if (!deviceID) {
+    deviceID = 'ID-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+    localStorage.setItem("kp_dev_id", deviceID);
 }
 
-modal.onclick=()=>modal.style.display="none"
+// Login logic
+window.enterAsGuest = () => {
+    document.getElementById('loginGate').style.display = 'none';
+};
 
-// profile upload
-document.getElementById('profileInput').addEventListener('change',async function(){
-  const file=this.files[0]
-  if(file){
-    const name=Date.now()+"_"+file.name
-    await supabase.storage.from('images').upload(name,file)
-    const { data }=supabase.storage.from('images').getPublicUrl(name)
-    profilePic=data.publicUrl
-    document.getElementById('profilePreview').src=profilePic
-  }
-})
+window.tryAdminLogin = () => {
+    const u = btoa(document.getElementById('adminUser').value.toLowerCase());
+    const p = btoa(document.getElementById('adminPass').value.toLowerCase());
+    
+    if(u === _0x1 && p === _0x2) {
+        isAdmin = true;
+        const ui = document.getElementById('usernameInput');
+        ui.value = "Owner";
+        ui.disabled = true;
+        document.getElementById('loginGate').style.display = 'none';
+    } else {
+        alert("Incorrect login.");
+    }
+};
 
-// send
-window.sendMessage=async function(){
-  const text=document.getElementById('messageInput').value
-  const file=document.getElementById('imageInput').files[0]
-  const username=usernameInput.value||"Anonymous"
+// Pin logic
+window.setPin = async (text) => {
+    if(!isAdmin) return;
+    await addDoc(collection(db, "pins"), { text, createdAt: Date.now() });
+};
 
-  let imageUrl=""
+onSnapshot(query(collection(db, "pins"), orderBy("createdAt", "desc"), limit(1)), (snap) => {
+    const pinArea = document.getElementById('pinned-area');
+    if(!snap.empty) {
+        pinArea.style.display = 'block';
+        document.getElementById('pin-content').innerText = snap.docs[0].data().text;
+    }
+});
 
-  if(file){
-    const name=Date.now()+"_"+file.name
-    await supabase.storage.from('images').upload(name,file)
-    const { data }=supabase.storage.from('images').getPublicUrl(name)
-    imageUrl=data.publicUrl
-  }
+// Messages
+const usernameInput = document.getElementById('usernameInput');
+if(localStorage.getItem("chatUsername")) usernameInput.value = localStorage.getItem("chatUsername");
+usernameInput.oninput = () => localStorage.setItem("chatUsername", usernameInput.value);
 
-  if(!text&&!imageUrl)return
+window.sendMessage = async function() {
+    const text = document.getElementById('messageInput').value;
+    const file = document.getElementById('imageInput').files[0];
+    let user = usernameInput.value || "Anonymous";
 
-  await addDoc(collection(db,"messages"),{
-    user:username,
-    text:text,
-    image:imageUrl,
-    profilePic:profilePic||"",
-    createdAt:Date.now()
-  })
-
-  document.getElementById('messageInput').value=''
-  document.getElementById('imageInput').value=''
-}
-
-// messages
-onSnapshot(query(collection(db,"messages"),orderBy("createdAt")),(snap)=>{
-  const messagesDiv=document.getElementById('messages')
-  messagesDiv.innerHTML=""
-
-  snap.forEach(doc=>{
-    const data=doc.data()
-
-    const msg=document.createElement('div')
-    msg.className='message'
-
-    const avatar=document.createElement(data.profilePic?'img':'div')
-    avatar.className='avatar'
-    if(data.profilePic){
-      avatar.src=data.profilePic
-      avatar.onclick=()=>openImage(data.profilePic)
+    // Block fake owners
+    if(!isAdmin && (user.toLowerCase().includes("owner") || user.toLowerCase().includes("kumail"))) {
+        alert("Username reserved for Owner.");
+        return;
     }
 
-    const bubble=document.createElement('div')
-    bubble.className='bubble'
-
-    const user=document.createElement('div')
-    user.className='username'
-    user.innerText=data.user
-
-    bubble.appendChild(user)
-
-    if(data.text){
-      const t=document.createElement('div')
-      t.innerText=data.text
-      bubble.appendChild(t)
+    let imageUrl = "";
+    if(file){
+        const name = Date.now() + "_" + file.name;
+        await supabase.storage.from('images').upload(name, file);
+        const { data } = supabase.storage.from('images').getPublicUrl(name);
+        imageUrl = data.publicUrl;
     }
 
-    if(data.image){
-      const img=document.createElement('img')
-      img.src=data.image
-      img.onclick=()=>openImage(data.image)
-      bubble.appendChild(img)
+    if(!text && !imageUrl) return;
+
+    await addDoc(collection(db, "messages"), {
+        user: isAdmin ? "Owner" : user,
+        text,
+        image: imageUrl,
+        profilePic: profilePic,
+        dev: deviceID, // This ID stays same for the person
+        isOwner: isAdmin,
+        createdAt: Date.now()
+    });
+
+    document.getElementById('messageInput').value = '';
+    document.getElementById('imageInput').value = '';
+};
+
+// Render
+onSnapshot(query(collection(db, "messages"), orderBy("createdAt")), (snap) => {
+    const messagesDiv = document.getElementById('messages');
+    messagesDiv.innerHTML = "";
+
+    snap.forEach(doc => {
+        const d = doc.data();
+        const m = document.createElement('div');
+        m.className = 'message';
+
+        const avatar = document.createElement(d.profilePic ? 'img' : 'div');
+        avatar.className = 'avatar';
+        if(d.profilePic) avatar.src = d.profilePic;
+
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+
+        const uHeader = document.createElement('div');
+        uHeader.className = 'username';
+        
+        if(d.isOwner) {
+            uHeader.innerHTML = `<span class="admin-badge">Owner 👑</span>`;
+        } else {
+            uHeader.innerText = d.user;
+        }
+
+        // Admin-only view (IDs and Pin buttons)
+        if(isAdmin) {
+            const idTag = document.createElement('span');
+            idTag.className = 'device-id';
+            idTag.innerText = `[${d.dev}]`;
+            uHeader.appendChild(idTag);
+
+            if(d.text) {
+                const pinBtn = document.createElement('span');
+                pinBtn.className = 'pin-action';
+                pinBtn.innerText = 'Pin Message';
+                pinBtn.onclick = () => setPin(d.text);
+                uHeader.appendChild(pinBtn);
+            }
+        }
+
+        bubble.appendChild(uHeader);
+        if(d.text) { const t = document.createElement('div'); t.innerText = d.text; bubble.appendChild(t); }
+        if(d.image) { 
+            const i = document.createElement('img'); i.src = d.image; 
+            i.onclick = () => { document.getElementById('imageModal').style.display='flex'; document.getElementById('modalImg').src=d.image; };
+            bubble.appendChild(i); 
+        }
+
+        m.appendChild(avatar);
+        m.appendChild(bubble);
+        messagesDiv.appendChild(m);
+    });
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+});
+
+// Profile Pic logic
+document.getElementById('profileInput').onchange = async function(){
+    const file = this.files[0];
+    if(file){
+        const name = "p_"+Date.now();
+        await supabase.storage.from('images').upload(name, file);
+        const { data } = supabase.storage.from('images').getPublicUrl(name);
+        profilePic = data.publicUrl;
+        document.getElementById('profilePreview').src = profilePic;
     }
-
-    msg.appendChild(avatar)
-    msg.appendChild(bubble)
-    messagesDiv.appendChild(msg)
-  })
-
-  messagesDiv.scrollTop=messagesDiv.scrollHeight
-})
+};
 </script>
-
 </body>
 </html>
