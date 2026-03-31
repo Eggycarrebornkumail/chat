@@ -20,7 +20,6 @@ body{
 
 .container{ display:flex; flex-direction:column; height:100%; }
 
-/* Login Overlay */
 .login-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: var(--bg); z-index: 1000; display: flex; 
@@ -31,21 +30,18 @@ body{
     background: #1c1c1c; color: #fff; width: 260px; outline: none;
 }
 
-/* Pinned Area */
 #pinned-area { 
     background: #1a1a00; border-bottom: 1px solid var(--accent); 
     padding: 12px; display: none; width: 100%; font-size: 14px;
     z-index: 10;
 }
 
-/* username box */
 .username-set{ padding:10px; background:var(--panel); }
 .username-set input{
   width:100%; padding:10px; border:none; border-radius:20px;
   background:#1c1c1c; color:white; outline:none;
 }
 
-/* chat */
 .chat{ display:flex; flex-direction:column; height:100%; min-height:0; }
 .messages{
   flex:1; min-height:0; overflow-y:auto;
@@ -58,12 +54,12 @@ body{
 
 .username{ color:var(--accent); font-size:12px; margin-bottom:4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .admin-badge { color: var(--owner); font-weight: bold; }
-.device-id { font-size: 9px; color: #666; font-family: monospace; cursor: pointer; background: #1a1a1a; padding: 2px 5px; border-radius: 4px; }
+.device-id { font-size: 9px; color: #777; font-family: monospace; cursor: pointer; background: #1a1a1a; padding: 2px 5px; border-radius: 4px; border: 1px solid #333; }
+.device-id:hover { border-color: var(--accent); color: #fff; }
 .pin-action { font-size: 10px; color: var(--accent); cursor: pointer; text-decoration: underline; margin-left: auto;}
 
 .bubble img{ margin-top:8px; max-width:100%; border-radius:10px; cursor:pointer; }
 
-/* input */
 .input-area{
   display:flex; align-items:center; gap:10px; padding:10px;
   background:var(--panel); position:sticky; bottom:0;
@@ -143,15 +139,13 @@ const app=initializeApp(firebaseConfig)
 const db=getFirestore(app)
 const supabase=createClient("https://gsahyfawfxjpfxcqpjvk.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzYWh5ZmF3ZnhqcGZ4Y3FwanZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NDYyMDYsImV4cCI6MjA4OTQyMjIwNn0.GpbGst-tN8ONHifaXXb-Ehn8JgxWJ3q7w3hf4b8_AxY")
 
-// Obfuscated Login
-const _0x1 = "a3VtYWls"; // kumail
-const _0x2 = "dGVzdA==";  // test
+const _0x1 = "a3VtYWls"; 
+const _0x2 = "dGVzdA=="; 
 
 let isAdmin = false;
 let profilePic = "";
 let userTags = {}; 
 
-// Device ID Logic
 let deviceID = localStorage.getItem("kp_dev_id");
 if (!deviceID) {
     deviceID = 'ID-' + Math.random().toString(36).substr(2, 6).toUpperCase();
@@ -172,18 +166,23 @@ window.tryAdminLogin = () => {
     } else { alert("Login Failed"); }
 };
 
-// Global Nickname/Tag Logic
-window.renameUser = async (id) => {
+// Global Nickname/ID Mapping Logic
+window.renameUser = async (rawId) => {
     if(!isAdmin) return;
-    const n = prompt(`Enter nickname for ${id}:`);
-    if(n) await setDoc(doc(db, "userTags", id), { nickname: n });
+    const n = prompt(`Change identification for ${rawId} to:`);
+    if(n) {
+        await setDoc(doc(db, "userTags", rawId), { nickname: n });
+        alert(`ID mapped to: ${n}. All current and future messages from this user will show this ID.`);
+    }
 };
 
+// Real-time listener for ID mappings
 onSnapshot(collection(db, "userTags"), (snap) => {
+    userTags = {}; // Reset and rebuild
     snap.forEach(doc => { userTags[doc.id] = doc.data().nickname; });
+    // We don't need a full refresh here, the next render cycle handles it
 });
 
-// Pin Logic
 window.setPin = async (t) => { if(isAdmin) await addDoc(collection(db, "pins"), { text: t, createdAt: Date.now() }); };
 onSnapshot(query(collection(db, "pins"), orderBy("createdAt", "desc"), limit(1)), (snap) => {
     const area = document.getElementById('pinned-area');
@@ -197,18 +196,15 @@ const usernameInput = document.getElementById('usernameInput');
 if(localStorage.getItem("chatUsername")) usernameInput.value = localStorage.getItem("chatUsername");
 usernameInput.oninput = () => localStorage.setItem("chatUsername", usernameInput.value);
 
-// Send Function with Name Filtering
 window.sendMessage = async function() {
     const text = document.getElementById('messageInput').value;
     const file = document.getElementById('imageInput').files[0];
     let user = usernameInput.value || "Anonymous";
 
-    // STRICT OWNER FILTER
     const forbidden = ["owner", "0wner", "own3r", "kumail"];
     const checkUser = user.toLowerCase().replace(/\s/g, ''); 
     if(!isAdmin && forbidden.some(word => checkUser.includes(word))) {
-        alert("You cannot use a name containing 'Owner' or 'Kumail'.");
-        usernameInput.value = "Guest";
+        alert("Name reserved.");
         return;
     }
 
@@ -236,7 +232,6 @@ window.sendMessage = async function() {
     document.getElementById('imageInput').value = '';
 };
 
-// Rendering
 onSnapshot(query(collection(db, "messages"), orderBy("createdAt")), (snap) => {
     const messagesDiv = document.getElementById('messages');
     messagesDiv.innerHTML = "";
@@ -265,8 +260,13 @@ onSnapshot(query(collection(db, "messages"), orderBy("createdAt")), (snap) => {
         if(isAdmin) {
             const idTag = document.createElement('span');
             idTag.className = 'device-id';
-            const displayId = userTags[d.dev] || d.dev;
-            idTag.innerText = `[${displayId}]`;
+            
+            // This is the "Magic" part: 
+            // It checks if the database has a mapped name for this specific device ID
+            const mappedId = userTags[d.dev] || d.dev; 
+            
+            idTag.innerText = `[${mappedId}]`;
+            idTag.title = "Click to change this user's ID";
             idTag.onclick = () => renameUser(d.dev);
             uHeader.appendChild(idTag);
 
